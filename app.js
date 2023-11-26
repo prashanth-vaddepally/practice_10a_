@@ -70,7 +70,7 @@ app.post("/register/", async (request, response) => {
   }
 });
 
-app.post("/login/", authenticateToken, async (request, response) => {
+app.post("/login/", async (request, response) => {
   const { username, password } = request.body;
   const selectUserQuery = `SELECT * FROM user WHERE username = '${username}'`;
   const dbUser = await db.get(selectUserQuery);
@@ -125,13 +125,13 @@ app.get("/states/:stateId/", authenticateToken, async (request, response) => {
 
 app.post("/districts/", authenticateToken, async (request, response) => {
   let { username } = request;
-  const { districtName, stateId, cases, curved, active, deaths } = request.body;
+  const { districtName, stateId, cases, cured, active, deaths } = request.body;
   const theQuery = `
-    INSERT INTO district (district_name,state_id,cases,curved,active,deaths)
+    INSERT INTO district (district_name,state_id,cases,cured,active,deaths)
     VALUES('${districtName}',
         ${stateId},
         ${cases},
-        ${curved},
+        ${cured},
         ${active},
         ${deaths});`;
   const dbresponse = await db.run(theQuery);
@@ -146,7 +146,7 @@ app.get(
     let { username } = request;
     const { districtId } = request.params;
     const gettingIdQuery = `
-    SELECT * FROM district WHERE district_id = ${stateId};`;
+    SELECT * FROM district WHERE district_id = ${districtId};`;
     const thing = await db.get(gettingIdQuery);
     const fullans = (thing) => {
       return {
@@ -154,7 +154,7 @@ app.get(
         districtName: thing.districtName,
         stateId: thing.stateId,
         cases: thing.cases,
-        curved: thing.curved,
+        cured: thing.cured,
         active: thing.active,
         deaths: thing.deaths,
       };
@@ -186,7 +186,7 @@ app.put(
     const {
       districtName,
       stateId,
-      curved,
+      cured,
       cases,
       active,
       deaths,
@@ -195,7 +195,7 @@ app.put(
     UPDATE district SET
     districtName = '${districtName}',
     stateId= ${stateId},
-    curved= ${curved},
+    cured= ${cured},
     cases = ${cases},
     active = ${active},
     deaths = ${deaths};`;
@@ -217,7 +217,7 @@ app.get(
     const fullans = (dbresponse) => {
       return {
         totalCases: fullans.totalcases,
-        totalCured: fullans.totalcurved,
+        totalCured: fullans.totalcured,
         totalActive: fullans.totalactive,
         totalDeaths: fullans.totaldeaths,
       };

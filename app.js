@@ -4,6 +4,8 @@ const sqlite3 = require("sqlite3");
 const path = require("path");
 const app = express();
 app.use(express.json());
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 let db = null;
 const dbpath = path.join(__dirname, "covid19IndiaPortal.db");
 const intializerDBAndSaver = async () => {
@@ -79,7 +81,7 @@ app.post("/login/", async (request, response) => {
     response.send("Invalid user");
   } else {
     const ispasswordMatch = await bcrypt.compare(password, dbUser.password);
-    if ((ispasswordMatch = true)) {
+    if (ispasswordMatch === true) {
       const payload = {
         username: username,
       };
